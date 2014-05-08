@@ -2,7 +2,6 @@ package org.ocbn.octools.tools;
 
 import java.io.BufferedReader;
 import java.io.PrintWriter;
-import org.ocbn.octools.ocmodel.ModelCV;
 import org.ocbn.octools.util.DefParams;
 import org.ocbn.octools.util.GenUtil;
 
@@ -22,10 +21,10 @@ public class EDCHandler {
         log = GenUtil.getDefaultLog ();
         log.println (GenUtil.getTimeStamp ());
         GenUtil.registerStart ();
-        String usageMsg = "Usage: XOCConverter SourceFileDirectory SourceType MappingFile OutputFileDirectory";
+        String usageMsg = "Usage: XOCConverter SourceFileDirectory SourceType OutputFileDirectory";
         String warnMsg = "WARNING: Missing command line args. Using defaults from PROP file.";
        
-        if (args == null || args.length < 4){
+        if (args == null || args.length < 3){
             log.println (warnMsg);
             log.println (usageMsg);
             System.out.println (warnMsg);
@@ -34,8 +33,7 @@ public class EDCHandler {
         }
         try {
             CRFConverter converter = CRFConverter.getCRFConverter(args [1], 
-                                     args [0], args [3]);
-            ModelCV.initializeMappingFile(args [2]);
+                                     args [0], args [2]);
             converter.convertCRF();
             converter.dumpCRF ();
         } catch (Throwable e) {

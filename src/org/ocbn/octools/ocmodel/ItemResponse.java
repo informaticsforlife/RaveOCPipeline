@@ -113,6 +113,42 @@ public class ItemResponse {
     
     public String getValidErrMsg () { return this.validErrMsg; }
     
+    //utility method to process validations for greater/less than.
+    public static final String buildValidStr (String ln, String gn, String ncl, String 
+                                     ncu) {
+        String validStr1 = getLnGnExp (ln, gn);
+        String validStr2 = getLnGnExp (ncl, ncu);
+        if (validStr1 != null && validStr2 != null) {
+            return validStr1 + GenUtil.SPACE + 
+                   GenUtil.AND + GenUtil.AND + GenUtil.SPACE + 
+                    validStr2;
+        } else if (validStr1 != null && validStr2 == null) {
+            return validStr1;
+        } else if (validStr1 == null && validStr2 != null) {
+            return validStr2;
+        } else {                      //both null, no validation params passed.
+            return null;
+        }
+    }
+    
+    private static String getLnGnExp (String lt, String gt) {
+               
+        if ( (lt != null && lt.length () > 0) && 
+             (gt != null && gt.length () > 0) ) {
+            return ModelCV.OC_VALID_RANGE + "(" + 
+                   Double.parseDouble (gt) + GenUtil.COMMA + 
+                   Double.parseDouble (lt) + ")";
+        } else if ( (lt != null && lt.length () > 0) && 
+                    (gt == null || gt.length () == 0) ) {
+            return ModelCV.OC_VALID_LT + "(" + Double.parseDouble (lt) + ")";
+        } else if ( (lt == null || lt.length () == 0) && 
+                    (gt != null && gt.length () > 0) ) {
+            return ModelCV.OC_VALID_GT + "(" + Double.parseDouble (gt) + ")";
+        } else {                        //no validation range.
+            return null;
+        }
+    }
+    
     public static final String toStringHeaders () {
         
         return ModelCV.OC_ITEMS_RESPONSET + GenUtil.TAB + 

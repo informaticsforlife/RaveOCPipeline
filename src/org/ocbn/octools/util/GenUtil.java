@@ -42,6 +42,7 @@ public class GenUtil {
     public static final String NA2 = "NA";
     public static final String ALL = "ALL";   
     public static final String NOVAL = "";
+    public static final String AND = "&";
     
     private static PrintWriter log;
     private static long startTime;

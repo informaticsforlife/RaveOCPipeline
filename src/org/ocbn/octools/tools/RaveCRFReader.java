@@ -30,9 +30,6 @@ public class RaveCRFReader {
        
     private BufferedReader CRFDraftBR, formsBR, fieldsBR;
     private String RProjectName, RCRFDraftName;   //CRF level, for refactoring
-    private int RFormOrdinal,
-                RFieldOrdinal, RIndent; 
-    private float RLR, RUR, RNCL, RNCU;
     private ModelContainer OCContainer;
     private TreeMap <String, ModelContainer> CRFMap = new TreeMap ();
     
@@ -47,6 +44,15 @@ public class RaveCRFReader {
         sourceDir, DefParams.getDefaultProp(DefParams.RAVE_FIELDS_FILENAME))));   
     }
     
+    @Override
+    protected void finalize () throws Throwable {
+        
+        this.CRFDraftBR.close ();
+        this.formsBR.close ();
+        this.fieldsBR.close (); 
+        super.finalize();
+    }
+    
     public TreeMap <String, ModelContainer> getCRFMap () { return this.CRFMap; }
     
     //fakes a hierarchial approach in reading entries, although there is no
@@ -56,9 +62,6 @@ public class RaveCRFReader {
         readCRFDraftEntries ();
         readCRFFormsEntries();
         readCRFFieldsEntries();
-        this.CRFDraftBR.close ();
-        this.formsBR.close ();
-        this.fieldsBR.close ();
     }
 
     protected final void readCRFDraftEntries () throws IOException {
@@ -161,10 +164,10 @@ public class RaveCRFReader {
                 continue;
             }
             for (int i = 0; i < tempArr.length; i++) {
+                String lt = null, gt = null, ncl = null, ncu = null;
                 if (tempArr [i] == null || tempArr [i].trim ().length () == 0) {
                     continue;
                 }
-                String validValue, validErrMsg;
                 switch (headersArr [i]) {
                     case ModelCV.RAVE_FIELD_OID:
                         item.setName(tempArr [i]);
@@ -199,13 +202,19 @@ public class RaveCRFReader {
                     case ModelCV.RAVE_INDENT_LEVEL:
                         //currently ignored.
                     case ModelCV.RAVE_LOWER_RANGE: 
-                        this.RLR = Integer.parseInt (tempArr [i]);
+                        lt = tempArr [i];
                     case ModelCV.RAVE_UPPER_RANGE: 
-                        this.RUR = Integer.parseInt (tempArr [i]);
+                        gt = tempArr [i];
                     case ModelCV.RAVE_NCLOWER_RANGE: 
-                        this.RNCL = Integer.parseInt (tempArr [i]);
+                        ncl = tempArr [i];
                     case ModelCV.RAVE_NCUPPER_RANGE: 
-                        this.RNCU = Integer.parseInt (tempArr [i]);
+                        ncu = tempArr [i];
+                }
+                String validStr = ItemResponse.buildValidStr (lt, gt, ncl, ncu);
+                if (validStr != null) {
+                    itemResponse.setValid (validStr);
+                    itemResponse.setValidErrMsg("Response should satisfy the following "
+                        + "rule(s): " + validStr);
                 }
             }
             this.OCContainer.addItem(item);

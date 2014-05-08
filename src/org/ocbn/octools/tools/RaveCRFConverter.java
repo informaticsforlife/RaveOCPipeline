@@ -1,6 +1,8 @@
 package org.ocbn.octools.tools;
 
 import java.io.IOException;
+import java.util.TreeMap;
+import org.ocbn.octools.ocmodel.ModelContainer;
 import org.ocbn.octools.util.GenUtil;
 
 /**
@@ -27,5 +29,8 @@ public class RaveCRFConverter extends CRFConverter {
         
         RaveCRFReader rcr = new RaveCRFReader (sourceDir);
         rcr.readEntries();
+        TreeMap <String, ModelContainer> tempMap = rcr.getCRFMap();
+        OCCRFRep dumper = new OCCRFRep(this.outputDir, tempMap);
+        dumper.dumpEntries ();
     }
 }
