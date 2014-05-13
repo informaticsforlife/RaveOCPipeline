@@ -1,33 +1,22 @@
-package org.ocbn.octools.ocmodel;
+package org.ocbn.octools.model;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
-import org.ocbn.octools.tools.XOCMapper;
 import org.ocbn.octools.util.GenUtil;
 
 /**
  * Controlled vocabularies for all the variables. Dispenses the appropriate mapping. 
- * Could optionally move some of its CV to a prop file or the likes. 
- * Reading the mapping file could be moved elsewhere. 
- * The mapping file is of the format: OC-Sheet, OC-Field, X-Sheet, X-Field, 
- * Fixed Value, Comments
- * It does not allow null values, and uses 'NA's instead. For now, the 
- * assumed mapping is a simple 1:1, and as such, the OC-Sheet/Field combination
- * identify a unique tuple. 
+ * Could optionally move some of its CV to a prop file or the likes.
  * 
  * @author Rashad Badrawi
  */
 
 public class ModelCV {
     
-    private static ArrayList <XOCMapper> mapperList = new ArrayList ();
-    private static ArrayList <String> RaveColsList = new ArrayList ();
-    private static ArrayList <String> OCResponseTList = new ArrayList ();
-    private static ArrayList <String> OCDataTypeList = new ArrayList ();
+    private static ArrayList <String> RaveColsList = new ArrayList <String>();
+    private static ArrayList <String> OCResponseTList = new ArrayList <String>();
+    private static ArrayList <String> OCDataTypeList = new ArrayList <String>();
     
-    //EDC CRF types
+    //Supported EDC CRF types
     public static final String EDC_RAVE = "RAVE";
     
     //OC CRF sheet names (Instructions sheet not generated or included)
@@ -75,9 +64,9 @@ public class ModelCV {
     public static final String OC_ITEMS_RESPONSELAYOUT = "RESPONSE_LAYOUT";
     public static final String OC_ITEMS_DEFAULTV = "DEFAULT_VALUE";
     public static final String OC_ITEMS_DATAT = "DATA_TYPE";
-    public static final String OC_ITEMS_DECWIDTH = "WIDTH_DECIMAL";
-    public static final String OC_ITEMS_VALIDATION = "VALIDATION";	
-    public static final String OC_ITEMS_VALIDATIONE = "VALIDATION_ERROR_MESSAGE";
+    public static final String OC_ITEMS_DEC_WID = "WIDTH_DECIMAL";
+    public static final String OC_ITEMS_VALID = "VALIDATION";	
+    public static final String OC_ITEMS_VALID_ERR = "VALIDATION_ERROR_MESSAGE";
     public static final String OC_ITEMS_PHI = "PHI";
     public static final String OC_ITEMS_REQUIRED = "REQUIRED";
     public static final String OC_ITEMS_ITEMD = "ITEM_DISPLAY_STATUS";
@@ -86,8 +75,8 @@ public class ModelCV {
     //Generic
     public static final String OC_CRF_CV_SHOW = "SHOW";
     public static final String OC_CRF_CV_HIDE = "HIDE";
-    public static final String OC_CRF_0 = "0";
-    public static final String OC_CRF_1 = "1";
+    public static final int OC_CRF_0 = 0;
+    public static final int OC_CRF_1 = 1;
     public static final String OC_CRF_DEF_VERSION = "1";
     public static final String OC_CRF_DEF_REV_NOTES = "Data Migration: Rave";
     public static final int OC_CRF_GROUP_RNUM_DEFAULT = 1;
@@ -98,8 +87,8 @@ public class ModelCV {
     
     //Specific
     public static final String OC_CRF_CV_GROUP_LABEL_BASIC = "Basic"; //basic grouping
-    public static final String OC_CRF_CV_GROUPL_GRID = "GRID";
-    public static final String OC_CRF_CV_GROUPL_NONR = "NON-REPEATING";
+    public static final String OC_CRF_CV_GROUP_LAYOUT_GRID = "GRID";
+    public static final String OC_CRF_CV_GROUP_LAYOUT_NONR = "NON-REPEATING";
     public static final String OC_CRF_CV_RESPONSET_TEXT = "text";
     public static final String OC_CRF_CV_RESPONSET_TEXTA = "textarea";
     public static final String OC_CRF_CV_RESPONSET_SINGLES = "single-select";
@@ -110,8 +99,8 @@ public class ModelCV {
     public static final String OC_CRF_CV_RESPONSET_GROUPC = "group-calculation";
     public static final String OC_CRF_CV_RESPONSET_FILE = "file";
     public static final String OC_CRF_CV_RESPONSET_INSTANTC = "instant-calculation";
-    public static final String OC_CRF_CV_RESPONSELAYOUT_HORIZONTAL = "HORIZONTAL";
-    public static final String OC_CRF_CV_RESPONSELAYOUT_VERTICAL = "VERTICAL";
+    public static final String OC_CRF_CV_RESPONSELAYOUT_HOR = "HORIZONTAL";
+    public static final String OC_CRF_CV_RESPONSELAYOUT_VER = "VERTICAL";
     public static final String OC_CRF_CV_DATAT_ST = "ST";
     public static final String OC_CRF_CV_DATAT_INT = "INT";
     public static final String OC_CRF_CV_DATAT_REAL = "REAL";
@@ -120,6 +109,20 @@ public class ModelCV {
     public static final String OC_CRF_CV_DATAT_FILE = "FILE";
     
     //Rave CVs. 
+    //Control types - incomplete list (?)
+    public static final String RAVE_CT_CHECKBOX = "CheckBox";
+    public static final String RAVE_CT_RADIO = "RadioButton";
+    public static final String RAVE_CT_RADIOV = "RadioButton (Vertical)";
+    public static final String RAVE_CT_SEARCHL = "SearchList";
+    public static final String RAVE_CT_SEARCHDL = "Dynamic SearchList";
+    public static final String RAVE_CT_LONGTEXT = "LongText";
+    public static final String RAVE_CT_DATETIME = "DateTime";
+    public static final String RAVE_CT_TEXT = "Text";
+    //Generic
+    public static final String RAVE_FALSE = "FALSE";
+    public static final String RAVE_TRUE = "TRUE";
+    
+    
     //Rave CRF - CRFDraft sheet
     public static final String RAVE_PROJECT_NAME = "ProjectName";
     public static final String RAVE_DRAFT_NAME = "DraftName";
@@ -135,7 +138,7 @@ public class ModelCV {
     public static final String RAVE_DRAFT_FIELD_NAME = "DraftFieldName";
     public static final String RAVE_PRE_TEXT = "PreText";
     public static final String RAVE_FIXED_UNIT = "FixedUnit";
-    public static final String RAVE_HEADERTEXT = "HeaderText";
+    public static final String RAVE_HEADER_TEXT = "HeaderText";
     public static final String RAVE_INDENT_LEVEL = "IndentLevel";
     public static final String RAVE_CONTROL_TYPE = "ControlType";
     public static final String RAVE_DATA_DICTIONARY_NAME = "DataDictionaryName";
@@ -147,7 +150,7 @@ public class ModelCV {
     public static final String RAVE_NCUPPER_RANGE = "NCUpperRange";
     public static final String RAVE_IS_REQUIRED = "IsRequired";
     public static final String RAVE_IS_VISIBLE = "IsVisible";
- 
+            
     static {  
         ModelCV.RaveColsList.add (ModelCV.RAVE_PROJECT_NAME); 
         ModelCV.RaveColsList.add (ModelCV.RAVE_DRAFT_NAME);
@@ -160,7 +163,7 @@ public class ModelCV {
         ModelCV.RaveColsList.add (ModelCV.RAVE_DRAFT_FIELD_NAME);
         ModelCV.RaveColsList.add (ModelCV.RAVE_PRE_TEXT);
         ModelCV.RaveColsList.add (ModelCV.RAVE_FIXED_UNIT);
-        ModelCV.RaveColsList.add (ModelCV.RAVE_HEADERTEXT);
+        ModelCV.RaveColsList.add (ModelCV.RAVE_HEADER_TEXT);
         ModelCV.RaveColsList.add (ModelCV.RAVE_INDENT_LEVEL);
         ModelCV.RaveColsList.add (ModelCV.RAVE_CONTROL_TYPE);
         ModelCV.RaveColsList.add (ModelCV.RAVE_DATA_DICTIONARY_NAME);
@@ -191,79 +194,16 @@ public class ModelCV {
         ModelCV.OCDataTypeList.add (ModelCV.OC_CRF_CV_DATAT_PDATE);
         ModelCV.OCDataTypeList.add (ModelCV.OC_CRF_CV_DATAT_FILE);
     }
-    
-    public static void initializeMappingFile (String mappingFileName) {
         
-        GenUtil.validateString(mappingFileName);
-        try {
-            BufferedReader br = new BufferedReader (new FileReader (mappingFileName));
-            String line;
-            String [] headersArr = null;
-            while ((line = br.readLine()) != null) {
-                XOCMapper mapper;
-                line = line.trim();
-                String [] tempArr = line.split(GenUtil.TAB);
-                if (tempArr.length != 6) {                 //i.e. no code/label
-                    throw new IllegalStateException ("Invalid row in mapping file: "
-                            + tempArr.length);
-                }
-                if (headersArr == null) {
-                    headersArr = tempArr;  
-                    continue;
-                }
-                //save entries. 
-                mapper = new XOCMapper(); 
-                mapper.setAttValOC (tempArr [0], tempArr [1]);
-                //either both carry values or neither do.
-                if (!GenUtil.NA.equals (tempArr [2]) &&    
-                    !GenUtil.NA.equals (tempArr [3])) {
-                    mapper.setAttValX (tempArr [2], tempArr [3]);
-                }
-                if (!GenUtil.NA.equals (tempArr [4])) {
-                    mapper.setConstValue (tempArr [4]);
-                }
-                if (!GenUtil.NA.equals (tempArr [5])) {
-                    mapper.setComment (tempArr [5]);
-                } 
-                ModelCV.mapperList.add(mapper);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException ("Unable to read mapping file."
-                                        + mappingFileName);
-        }
-        //debugging
-        
-        System.out.println ("Listing all code/label pairs: ");
-        for (int i = 0; i < ModelCV.mapperList.size (); i++) {
-            System.out.println (ModelCV.mapperList.get (i));
-        }
-    }
-    
-    public static final ArrayList <XOCMapper> getMapping (String OCCategoryName,
-                                                          String OCFieldName) {
-    
-        XOCMapper dummy = new XOCMapper();
-        ArrayList <XOCMapper> tempList = new ArrayList ();
-        dummy.setAttValOC(OCCategoryName, OCFieldName);
-        for (int i = 0; i < ModelCV.mapperList.size (); i++) {
-            if (ModelCV.mapperList.get (i).equals (dummy)) {
-                tempList.add (ModelCV.mapperList.get(i));
-            }
-        }
-        
-        return tempList;
-    }
-    
     public static boolean isValidShowOrHide (String value) {
         
         return ModelCV.OC_CRF_CV_SHOW.equals (value) ||
                ModelCV.OC_CRF_CV_HIDE.equals (value);
     }
     
-    public static boolean isValid0Or1 (String value) {
+    public static boolean isValid0Or1 (int value) {
         
-        return ModelCV.OC_CRF_0.equals (value) ||
-               ModelCV.OC_CRF_1.equals (value);
+        return (ModelCV.OC_CRF_0 == value) || (ModelCV.OC_CRF_1 == value);
     }
     
     public static boolean isValidRaveColName (String value) {
@@ -283,7 +223,33 @@ public class ModelCV {
     
     public static boolean isValidOCResponseLayout (String value) {
         
-        return ModelCV.OC_CRF_CV_RESPONSELAYOUT_HORIZONTAL.equals (value) ||
-               ModelCV.OC_CRF_CV_RESPONSELAYOUT_VERTICAL.equals (value);
+        return ModelCV.OC_CRF_CV_RESPONSELAYOUT_HOR.equals (value) ||
+               ModelCV.OC_CRF_CV_RESPONSELAYOUT_VER.equals (value);
+    }
+    
+    //incomplete list
+    public static String getOCResponseType (String RaveResponseType) {
+        
+        GenUtil.validateString(RaveResponseType);
+        switch (RaveResponseType) {
+            case ModelCV.RAVE_CT_CHECKBOX: 
+                return ModelCV.OC_CRF_CV_RESPONSET_CHECKBOX;  
+            case ModelCV.RAVE_CT_DATETIME: 
+                return ModelCV.OC_CRF_CV_RESPONSET_TEXT;  
+            case ModelCV.RAVE_CT_LONGTEXT: 
+                return ModelCV.OC_CRF_CV_RESPONSET_TEXTA;  
+            case ModelCV.RAVE_CT_RADIO: 
+                return ModelCV.OC_CRF_CV_RESPONSET_RADIO;  
+            case ModelCV.RAVE_CT_RADIOV: 
+                return ModelCV.OC_CRF_CV_RESPONSET_RADIO;
+            case ModelCV.RAVE_CT_SEARCHDL:
+                return ModelCV.OC_CRF_CV_RESPONSET_SINGLES;
+            case ModelCV.RAVE_CT_SEARCHL: 
+                return ModelCV.OC_CRF_CV_RESPONSET_SINGLES;
+            case ModelCV.RAVE_CT_TEXT: 
+                return ModelCV.OC_CRF_CV_RESPONSET_TEXT;
+        }
+        throw new IllegalArgumentException ("Invalid RAVE control type: " +
+                                            RaveResponseType);
     }
 }

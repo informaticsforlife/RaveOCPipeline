@@ -46,6 +46,12 @@ public class DefParams {
         }
         defParamsList = new ArrayList <> ();
         defParamsList.add (DefParams.LOG_FILE_PROP);
+        defParamsList.add (DefParams.RAVE_CRF_FILENAME);
+        defParamsList.add (DefParams.RAVE_FOLDERS_FILENAME);
+        defParamsList.add (DefParams.RAVE_FIELDS_FILENAME);
+        defParamsList.add (DefParams.RAVE_DD_FILENAME);
+        defParamsList.add (DefParams.RAVE_DDENTRIES_FILENAME);    
+        defParamsList.add (DefParams.PROP_FILE_NAME_PROP); 
     }
 
     private DefParams () {}                             //no instances allowed

@@ -1,14 +1,17 @@
 package org.ocbn.octools.tools;
 
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.TreeMap;
-import org.ocbn.octools.ocmodel.CRF;
-import org.ocbn.octools.ocmodel.Group;
-import org.ocbn.octools.ocmodel.Item;
-import org.ocbn.octools.ocmodel.ModelContainer;
-import org.ocbn.octools.ocmodel.Section;
+import org.ocbn.octools.model.CRF;
+import org.ocbn.octools.model.Group;
+import org.ocbn.octools.model.Item;
+import org.ocbn.octools.model.ModelCV;
+import org.ocbn.octools.model.ModelContainer;
+import org.ocbn.octools.model.Section;
 import org.ocbn.octools.util.GenUtil;
 
 /**
@@ -16,6 +19,8 @@ import org.ocbn.octools.util.GenUtil;
  * format. 
  * 
  * Could also use setters/getters for access to the 'handy' instance atts. 
+ * TO DO: add the dumping functionality, allowing creating several folders, 
+ * one per CRF. 
  * 
  * @author Rashad Badrawi
  */
@@ -25,7 +30,6 @@ public class OCCRFRep {
     private BufferedWriter bw;
     private String outputDir;
     private TreeMap <String, ModelContainer> tempMap;     
-    private String tableHeaders;
     
     protected OCCRFRep (String nOutputDir, TreeMap <String, ModelContainer> CRFMap) {
     
@@ -63,77 +67,83 @@ public class OCCRFRep {
         while (iterator.hasNext()) {
             String key = (String)iterator.next();
             ModelContainer mc = tempMap.get (key);
-            System.out.println ("Processing CRF: " + key + " ... ");
+            System.out.println ("Processing CRF: " + mc.getOCCRF().getName() + " ... ");
             cnt++;
-            dumpCRF (mc.getOCCRF());
-            dumpSections (mc.getSections());
-            dumpGroups (mc.getGroups());
-            dumpItems (mc.getItems());
+            //create new subdir.
+            File newDir = new File (this.outputDir, key);
+            newDir.mkdir();
+            dumpCRF (newDir.getAbsolutePath(), mc.getOCCRF());
+            dumpSections (newDir.getAbsolutePath(), mc.getSections());
+            dumpGroups (newDir.getAbsolutePath(), mc.getGroups());
+            dumpItems (newDir.getAbsolutePath(), mc.getItems());
         }
         System.out.println ("Dumped " + cnt + " OC CRFs.");
     }
         
-    private void dumpCRF (CRF crf) {
+    private void dumpCRF (String path, CRF crf) throws IOException {
         
         System.out.println ("Dumping CRF sheet: " + crf.getName());
-    }
-    
-    private void dumpSections (TreeMap <String, Section> sectionsMap) {
-        
-    }
-    
-    private void dumpGroups (TreeMap <String, Group> groupsMap) {
-        
-    }
-    
-    private void dumpItems (TreeMap <String, Item> itemsMap) {
-        
-    }
-    
-    /*
-        this.tableHeaders = Patient.toStringHeaderCRF () + GenUtil.TAB + 
-                            Sample.toStringHeaderCRF () + GenUtil.TAB;
-        this.tempMap = ModelContainer.getClinParams();
-        this.tableHeaders += ((Params)this.tempMap.firstEntry().getValue()).toStringHeaderCRF();
-        this.tableHeaders += GenUtil.TAB;
-        this.tempMap = ModelContainer.getLabParams();
-        this.tableHeaders += ((Params)this.tempMap.firstEntry().getValue()).toStringHeaderCRF(); 
-        
-        //Group output in files, based on encounter type
-        TreeMap <String, Encounter> encMap = ModelContainer.getEncounters();
-        Iterator encIterator = encMap.keySet().iterator();
-        while (encIterator.hasNext()) {
-            Encounter enc = encMap.get ((String)encIterator.next());
-            this.bw = new BufferedWriter (new FileWriter (ModelCV.OC_CRF + 
-                                          GenUtil.UNDERSCORE + enc.getLabel()));
-            //temp step. Done to match naming in OC. 
-            this.tableHeaders = this.tableHeaders.replace(GenUtil.DOT, GenUtil.UNDERSCORE);
-            //End of temp step
-            
-            //System.out.println (this.tableHeaders); 
-            this.bw.write(this.tableHeaders);
-            this.bw.newLine();
-            System.out.println ("Dumping entries for encounter: " + enc.getLabel());
-            dumpInclusiveRows (enc.getType());
-            this.bw.close();
-        }
-    }
-  
-
-    //utility method
-    private void dumpOutput () throws IOException {
-
-        Iterator iterator = this.tempMap.keySet().iterator();
-        //System.out.println (this.tableHeaders);
-        this.bw.write (this.tableHeaders);
+        this.bw = new BufferedWriter (new FileWriter (path + File.separator + 
+                                    ModelCV.OC_CRF + GenUtil.FILE_SUFFIX_TEXT));
+        this.bw.write(CRF.toStringHeaders());
         this.bw.newLine();
-        while (iterator.hasNext()) {
-            String key = (String)iterator.next();
-            //System.out.println (this.tempMap.get(key));
-            this.bw.write(this.tempMap.get (key).toString());
-            this.bw.newLine();
-        }
+        this.bw.write(crf.toString());
         this.bw.flush();
+        this.bw.close();
+        //debugging
     }
-*/
+    
+    private void dumpSections (String path, TreeMap <String, Section> 
+                               sectionsMap) throws IOException {
+        
+        System.out.println ("Dumping Section sheet: " + sectionsMap.size());
+        this.bw = new BufferedWriter (new FileWriter (path + File.separator + 
+                               ModelCV.OC_SECTIONS + GenUtil.FILE_SUFFIX_TEXT));
+        this.bw.write (Section.toStringHeaders());
+        this.bw.newLine();
+        this.bw.flush();
+        Iterator iterator = sectionsMap.keySet().iterator();
+        while (iterator.hasNext()) {
+            this.bw.write (sectionsMap.get((String)iterator.next()).toString());
+            this.bw.newLine();
+            this.bw.flush();
+        }
+        this.bw.close();
+    }
+    
+    private void dumpGroups (String path, TreeMap <String, Group> 
+                             groupsMap) throws IOException {
+        
+        System.out.println ("Dumping Group sheet: " + groupsMap.size());
+        Iterator iterator = groupsMap.keySet().iterator();
+        this.bw = new BufferedWriter (new FileWriter (path + File.separator + 
+                               ModelCV.OC_GROUPS + GenUtil.FILE_SUFFIX_TEXT));     
+        this.bw.write (Group.toStringHeaders());
+        this.bw.newLine();
+        this.bw.flush();
+        while (iterator.hasNext()) {
+            this.bw.write (groupsMap.get((String)iterator.next()).toString());
+            this.bw.newLine();
+            this.bw.flush();
+        }
+        this.bw.close();
+    }
+    
+    private void dumpItems (String path, TreeMap <String, Item> itemsMap) 
+                                                           throws IOException {
+        
+        System.out.println ("Dumping Item sheet: " + itemsMap.size());
+        this.bw = new BufferedWriter (new FileWriter (path + File.separator + 
+                       ModelCV.OC_ITEMS + GenUtil.FILE_SUFFIX_TEXT)); 
+        this.bw.write (Item.toStringHeaders());
+        this.bw.newLine();
+        this.bw.flush();
+        Iterator iterator = itemsMap.keySet().iterator();
+        while (iterator.hasNext()) {
+            this.bw.write (itemsMap.get((String)iterator.next()).toString());
+            this.bw.newLine();
+            this.bw.flush();
+        }
+        this.bw.close();
+    }
 }

@@ -41,9 +41,10 @@ public class GenUtil {
     public static final String NA = "N/A";
     public static final String NA2 = "NA";
     public static final String ALL = "ALL";   
+    
     public static final String NOVAL = "";
     public static final String AND = "&";
-    
+    public static final String FILE_SUFFIX_TEXT = ".txt";
     private static PrintWriter log;
     private static long startTime;
     

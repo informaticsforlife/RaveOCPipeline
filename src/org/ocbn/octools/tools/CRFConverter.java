@@ -2,7 +2,7 @@ package org.ocbn.octools.tools;
 
 import java.io.IOException;
 
-import org.ocbn.octools.ocmodel.ModelCV;
+import org.ocbn.octools.model.ModelCV;
 
 /**
  * Main converter class, seed for a factory pattern. 

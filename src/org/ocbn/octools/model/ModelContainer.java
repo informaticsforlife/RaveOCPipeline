@@ -1,10 +1,11 @@
-package org.ocbn.octools.ocmodel;
+package org.ocbn.octools.model;
 
 import java.util.TreeMap;
 import org.ocbn.octools.util.GenUtil;
 
 /**
  * Container class for all entities. Works hand in hand with the reader/writer.
+ * It can hold one CRF and its associated sections, items, ...etc.
  * 
  * @author Rashad Badrawi
  */
@@ -46,11 +47,13 @@ public class ModelContainer {
      public void addItem (Item nItem) {
         
         GenUtil.validateNotNull(nItem);
-        if (this.itemMap.containsKey(nItem.getName())) {
+        if (this.itemMap.containsKey(nItem.getSectionRef().getLabel() + 
+                                     GenUtil.AT + nItem.getName())) {
             System.out.println ("Overwriting existing Item: " + 
                                 nItem.getName());
         }
-        this.itemMap.put (nItem.getName(), nItem);
+        this.itemMap.put (nItem.getSectionRef().getLabel() + GenUtil.AT 
+                          + nItem.getName(), nItem);
     }
 
     public CRF getOCCRF () { return this.OCCRF; }

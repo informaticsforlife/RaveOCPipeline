@@ -21,7 +21,7 @@ public class EDCHandler {
         log = GenUtil.getDefaultLog ();
         log.println (GenUtil.getTimeStamp ());
         GenUtil.registerStart ();
-        String usageMsg = "Usage: XOCConverter SourceFileDirectory SourceType OutputFileDirectory";
+        String usageMsg = "Usage: EDCHandler SourceFileDirectory SourceType OutputFileDirectory";
         String warnMsg = "WARNING: Missing command line args. Using defaults from PROP file.";
        
         if (args == null || args.length < 3){
