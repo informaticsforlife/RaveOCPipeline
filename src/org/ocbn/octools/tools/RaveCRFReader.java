@@ -1,17 +1,17 @@
 package org.ocbn.octools.tools;
 
-import java.io.BufferedReader;
+import au.com.bytecode.opencsv.CSVReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.TreeMap;
-import org.ocbn.octools.ocmodel.CRF;
-import org.ocbn.octools.ocmodel.Group;
-import org.ocbn.octools.ocmodel.Item;
-import org.ocbn.octools.ocmodel.ItemResponse;
-import org.ocbn.octools.ocmodel.ModelContainer;
-import org.ocbn.octools.ocmodel.ModelCV;
-import org.ocbn.octools.ocmodel.Section;
+import org.ocbn.octools.model.CRF;
+import org.ocbn.octools.model.Group;
+import org.ocbn.octools.model.Item;
+import org.ocbn.octools.model.ItemResponse;
+import org.ocbn.octools.model.ModelContainer;
+import org.ocbn.octools.model.ModelCV;
+import org.ocbn.octools.model.Section;
 
 import org.ocbn.octools.util.DefParams;
 
@@ -28,28 +28,28 @@ import org.ocbn.octools.util.GenUtil;
 
 public class RaveCRFReader {
        
-    private BufferedReader CRFDraftBR, formsBR, fieldsBR;
-    private String RProjectName, RCRFDraftName;   //CRF level, for refactoring
+    private CSVReader crfReader, formsReader, fieldsReader;
     private ModelContainer OCContainer;
-    private TreeMap <String, ModelContainer> CRFMap = new TreeMap ();
+    private TreeMap <String, ModelContainer> CRFMap;
     
     protected RaveCRFReader (String sourceDir) throws IOException {
         
+        this.CRFMap = new TreeMap <String, ModelContainer>();
         GenUtil.validateString(sourceDir);
-        this.CRFDraftBR = new BufferedReader (new FileReader (new File (
+        this.crfReader = new CSVReader (new FileReader (new File (
         sourceDir, DefParams.getDefaultProp(DefParams.RAVE_CRF_FILENAME))));
-        this.formsBR = new BufferedReader (new FileReader (new File (
-        sourceDir, DefParams.getDefaultProp(DefParams.RAVE_FOLDERS_FILENAME))));
-        this.fieldsBR = new BufferedReader (new FileReader (new File (
-        sourceDir, DefParams.getDefaultProp(DefParams.RAVE_FIELDS_FILENAME))));   
+        this.formsReader = new CSVReader (new FileReader (new File (
+        sourceDir, DefParams.getDefaultProp(DefParams.RAVE_FOLDERS_FILENAME)))); 
+        this.fieldsReader = new CSVReader (new FileReader (new File (
+        sourceDir, DefParams.getDefaultProp(DefParams.RAVE_FIELDS_FILENAME))));
     }
     
     @Override
     protected void finalize () throws Throwable {
         
-        this.CRFDraftBR.close ();
-        this.formsBR.close ();
-        this.fieldsBR.close (); 
+        this.crfReader.close();
+        this.formsReader.close ();
+        this.fieldsReader.close (); 
         super.finalize();
     }
     
@@ -66,77 +66,79 @@ public class RaveCRFReader {
 
     protected final void readCRFDraftEntries () throws IOException {
         
-        String line; 
         String [] headersArr = null;
         int cnt = 0;
-        while ((line = this.CRFDraftBR.readLine()) != null) {
-            this.OCContainer = null;
+        String [] tempArr;
+        while ((tempArr = this.crfReader.readNext()) != null) {
+            this.OCContainer = new ModelContainer();
             CRF OCCRF = new CRF ();
-            this.RProjectName = null;
-            this.RCRFDraftName = null;
-            line = line.trim();
-            String [] tempArr = line.split(GenUtil.TAB);
             if (headersArr == null) {
                 headersArr = tempArr;
                 continue;
             }            
             //set the global CRF parameters.
             for (int i = 0; i < tempArr.length; i++) {
-                if (tempArr [i] == null || tempArr [i].trim ().length () == 0) {
+                if (tempArr [i] == null || tempArr [i].trim ().length () == 0
+                    || tempArr [i].equals (GenUtil.NA)) {
                     continue;
                 }
                 switch (headersArr [i]) {
                     case ModelCV.RAVE_PROJECT_NAME:
-                        this.RProjectName = tempArr [i];
                         OCCRF.setName(tempArr [i]);
+                        break;
                     case ModelCV.RAVE_DRAFT_NAME:
-                        this.RCRFDraftName = tempArr [i];
                         OCCRF.setVersionDesc(tempArr [i]);
+                        break;
                 }
-                OCCRF.setVersion(ModelCV.OC_CRF_DEF_VERSION);
-                OCCRF.setRevNotes(ModelCV.OC_CRF_DEF_REV_NOTES);
-                this.OCContainer.addCRF (OCCRF);
-                this.CRFMap.put (OCCRF.getName(), this.OCContainer);
             }
+            OCCRF.setVersion(ModelCV.OC_CRF_DEF_VERSION);
+            OCCRF.setRevNotes(ModelCV.OC_CRF_DEF_REV_NOTES);
+            this.OCContainer.addCRF (OCCRF);
+            this.CRFMap.put (OCCRF.getName(), this.OCContainer);          
             cnt++;
+            addDefOCGroup ();
         }
         System.out.println ("Read : " + cnt + " CRF draft project.");
     }
         
     protected final void readCRFFormsEntries () throws IOException {
         
-        String line; 
         String [] headersArr = null;
         int cnt = 0;
-        while ((line = formsBR.readLine()) != null) {
+        String [] tempArr;
+        while ((tempArr = this.formsReader.readNext()) != null) {
             Section section = new Section ();
-            String [] tempArr = line.trim ().split(GenUtil.TAB);
             if (headersArr == null) {
                 headersArr = tempArr;
                 continue;
             }
             for (int i = 0; i < tempArr.length; i++) {
-                if (tempArr [i] == null || tempArr [i].trim ().length () == 0) {
+                if (tempArr [i] == null || tempArr [i].trim ().length () == 0
+                    || tempArr [i].equals (GenUtil.NA)) {
                     continue;
                 }
                 switch (headersArr [i]) {
                     case ModelCV.RAVE_OID:
                         section.setOID(tempArr [i]);
                         section.setLabel(tempArr [i]);
+                        break;
                     case ModelCV.RAVE_DRAFT_FORM_NAME:
                         section.setTitle(tempArr [i]);
+                        break;
                     case ModelCV.RAVE_HELP_TEXT: 
                         section.setInstruct(tempArr [i]);
+                        break;
                     case ModelCV.RAVE_ORDINAL:
                         section.setPageNum(tempArr [i]);
+                        break;
                     case ModelCV.RAVE_LINK_FORM_OID:
                         Section dummySection = new Section ();
                         dummySection.setLabel(tempArr [i]);
                         section.setParentSection(dummySection);
+                        break;
                 }
             }
             this.OCContainer.addSection(section);
-            addDefOCGroup ();
             cnt++;
         }
         System.out.println ("Read: " + cnt + " CRF forms.");
@@ -151,64 +153,94 @@ public class RaveCRFReader {
     
     protected final void readCRFFieldsEntries () throws IOException {
                
-        String line; 
         String [] headersArr = null;
         int cnt = 0;
-        while ((line = fieldsBR.readLine()) != null) {
+        String [] tempArr;
+        while ((tempArr = this.fieldsReader.readNext()) != null) {
             Item item = new Item ();
             ItemResponse itemResponse = new ItemResponse ();
             item.setItemResponse(itemResponse);
-            String [] tempArr = line.trim ().split(GenUtil.TAB);
             if (headersArr == null) {
                 headersArr = tempArr;
                 continue;
             }
             for (int i = 0; i < tempArr.length; i++) {
                 String lt = null, gt = null, ncl = null, ncu = null;
-                if (tempArr [i] == null || tempArr [i].trim ().length () == 0) {
+                if (tempArr [i] == null || tempArr [i].trim ().length () == 0 
+                    || tempArr [i].equals (GenUtil.NA)) {
                     continue;
                 }
                 switch (headersArr [i]) {
                     case ModelCV.RAVE_FIELD_OID:
                         item.setName(tempArr [i]);
+                        break;
                     case ModelCV.RAVE_FORM_OID:
                         Section dummySection = new Section ();
                         dummySection.setLabel(tempArr [i]);
                         item.setSectionRef(dummySection);
+                        break;
                     case ModelCV.RAVE_HELP_TEXT:
                         item.setRText(tempArr [i]);
+                        break;
                     case ModelCV.RAVE_DRAFT_FIELD_NAME:
                         item.setDesc(tempArr [i]);
+                        break;
                     case ModelCV.RAVE_PRE_TEXT: 
                         item.setLText(tempArr [i]);
+                        break;
                     case ModelCV.RAVE_FIXED_UNIT:
                         item.setUnits(tempArr [i]);
-                    case ModelCV.RAVE_HEADERTEXT:
+                        break;
+                    case ModelCV.RAVE_HEADER_TEXT:
                         item.setHeader(tempArr [i]);
+                        break;
                     case ModelCV.RAVE_CONTROL_TYPE:
-                        itemResponse.setResponseType(tempArr [i]);
+                        itemResponse.setResponseType(
+                        ModelCV.getOCResponseType (tempArr [i]));
+                        break;
                     case ModelCV.RAVE_DATA_DICTIONARY_NAME:
                         processDD (itemResponse, tempArr [i]);
+                        break;
                     case ModelCV.RAVE_DEFAULT_VALUE:
                         itemResponse.setDefValue(tempArr [i]);
+                        break;
                     case ModelCV.RAVE_DATA_FORMAT:
-                        itemResponse.setDataType(tempArr [i]);
+                        itemResponse.setDataType(ModelCV.OC_CRF_CV_DATAT_ST);
+                        //itemResponse.setDataType(tempArr [i]);
+                        break;
                     case ModelCV.RAVE_IS_REQUIRED:
-                        item.setIsRequired(Integer.valueOf(tempArr [i]));
+                        int flag = -1;
+                        switch (tempArr [i]) {
+                            case ModelCV.RAVE_TRUE:
+                                flag = ModelCV.OC_CRF_1;
+                                break;
+                            case ModelCV.RAVE_FALSE:
+                                flag = ModelCV.OC_CRF_0;
+                                break;
+                        }
+                        item.setIsRequired(flag);
+                        break;
                     case ModelCV.RAVE_IS_VISIBLE:
                         item.setDisStatus(tempArr [i]);
+                        break;
                     case ModelCV.RAVE_ORDINAL:
                         item.setQuestNum(Integer.valueOf(tempArr [i]));
+                        break;
                     case ModelCV.RAVE_INDENT_LEVEL:
                         //currently ignored.
+                        break;
                     case ModelCV.RAVE_LOWER_RANGE: 
                         lt = tempArr [i];
+                        break;
                     case ModelCV.RAVE_UPPER_RANGE: 
                         gt = tempArr [i];
+                        break;
                     case ModelCV.RAVE_NCLOWER_RANGE: 
                         ncl = tempArr [i];
+                        break;
                     case ModelCV.RAVE_NCUPPER_RANGE: 
                         ncu = tempArr [i];
+                        break;
                 }
                 String validStr = ItemResponse.buildValidStr (lt, gt, ncl, ncu);
                 if (validStr != null) {
