@@ -40,13 +40,13 @@ public class Item extends CRFEntity {
     public void setLText (String nLText) {
         
         GenUtil.validateString(nLText);
-        this.lText = nLText;
+        this.lText = processText (nLText);
     }
             
     public void setRText (String nRText) {
         
         GenUtil.validateString(nRText);
-        this.rText = nRText;
+        this.rText = processText (nRText);
     }
                 
     public void setUnits (String nUnits) {
@@ -205,6 +205,7 @@ public class Item extends CRFEntity {
                ItemResponse.toStringHeaders () + GenUtil.TAB +
                ModelCV.OC_ITEMS_PHI + GenUtil.TAB +
                ModelCV.OC_ITEMS_REQUIRED + GenUtil.TAB +
+               ModelCV.OC_ITEMS_ITEMD + GenUtil.TAB + 
                ModelCV.OC_ITEMS_SIMPLEC;
     }
     
@@ -218,7 +219,7 @@ public class Item extends CRFEntity {
                      GenUtil.getStrOrDef (this.getRText()) + GenUtil.TAB +
                      getSectionRef().getLabel() + GenUtil.TAB;
         if (getGroupRef() != null) {
-            str += getGroupRef() + GenUtil.TAB;
+            str += this.getGroupRef().getLabel() + GenUtil.TAB;
         } else {
             str += GenUtil.NOVAL + GenUtil.TAB;
         }
@@ -259,5 +260,18 @@ public class Item extends CRFEntity {
                GenUtil.getStrOrDef (this.getConDisplay());
        
         return str;
+    }
+    
+    //needed to handle specific RAVE CRF issues.
+    private String processText (String str) {
+        
+        final String NEW_LINE = "\n";     //GenUtil.NEWLINE did not work.
+        if (str.contains (NEW_LINE)) {
+            System.out.println ("Warning: new line character detected: " + 
+                                this.getName() + ". Replacing with <br>.");
+            return str.replace(NEW_LINE, GenUtil.DOT);
+         }
+        
+         return str;    
     }
 }

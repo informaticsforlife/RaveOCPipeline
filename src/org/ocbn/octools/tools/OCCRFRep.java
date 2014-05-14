@@ -140,6 +140,8 @@ public class OCCRFRep {
         this.bw.flush();
         Iterator iterator = itemsMap.keySet().iterator();
         while (iterator.hasNext()) {
+            //String key = (String)iterator.next();
+            //Item item = itemsMap.get (key);
             this.bw.write (itemsMap.get((String)iterator.next()).toString());
             this.bw.newLine();
             this.bw.flush();

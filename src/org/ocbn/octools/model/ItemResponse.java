@@ -136,8 +136,8 @@ public class ItemResponse {
         if ( (lt != null && lt.length () > 0) && 
              (gt != null && gt.length () > 0) ) {
             return ModelCV.OC_VALID_RANGE + "(" + 
-                   Double.parseDouble (gt) + GenUtil.COMMA + 
-                   Double.parseDouble (lt) + ")";
+                   Double.parseDouble (lt) + GenUtil.COMMA + 
+                   Double.parseDouble (gt) + ")";
         } else if ( (lt != null && lt.length () > 0) && 
                     (gt == null || gt.length () == 0) ) {
             return ModelCV.OC_VALID_LT + "(" + Double.parseDouble (lt) + ")";

@@ -22,6 +22,8 @@ import org.ocbn.octools.util.GenUtil;
  * CRFDraft, forms, and fields sheet. Can be extended to include the folders
  * sheet. 
  * No special class(es) constructs made for the Rave data elements. 
+ * The processStudyInstruct () method may eventually evolve in its own class, 
+ * which is edited with every new data source for conversion. 
  * 
  * @author Rashad Badrawi
  */
@@ -164,8 +166,8 @@ public class RaveCRFReader {
                 headersArr = tempArr;
                 continue;
             }
+            String lt = null, gt = null, ncl = null, ncu = null;
             for (int i = 0; i < tempArr.length; i++) {
-                String lt = null, gt = null, ncl = null, ncu = null;
                 if (tempArr [i] == null || tempArr [i].trim ().length () == 0 
                     || tempArr [i].equals (GenUtil.NA)) {
                     continue;
@@ -242,18 +244,43 @@ public class RaveCRFReader {
                         ncu = tempArr [i];
                         break;
                 }
-                String validStr = ItemResponse.buildValidStr (lt, gt, ncl, ncu);
-                if (validStr != null) {
-                    itemResponse.setValid (validStr);
-                    itemResponse.setValidErrMsg("Response should satisfy the following "
-                        + "rule(s): " + validStr);
-                }
             }
-            this.OCContainer.addItem(item);
+            String validStr = ItemResponse.buildValidStr (lt, gt, ncl, ncu);
+            if (validStr != null) {
+                itemResponse.setValid (validStr);
+                itemResponse.setValidErrMsg("Response should satisfy the following "
+                    + "rule(s): " + validStr);
+            }
+            if (processStudyInstruct (item)) {
+                this.OCContainer.addItem(item);
+            }
             cnt++;
         }
         System.out.println ("Read: " + cnt + " CRF fields.");
     }
+    
+    //limited to POND for now
+    private boolean processStudyInstruct (Item item) {
+        
+        final String RAVE_STUDY_POND = "POND";
+        final String BLANK_LINE_ITEM = "BLANK_LINE";
+        //To begin with, for now, skip POND CRF blank lines. 
+        if (OCContainer.getOCCRF().getName().equals (RAVE_STUDY_POND)) {
+            if (item.getName().startsWith(BLANK_LINE_ITEM)) {
+                System.out.println ("Warning: skipping blank line item: " +
+                item.getName() + " " + item.getSectionRef().getLabel());
+                return false;
+            }
+        }
+        //add default group for POND 
+        Group defGroup = OCContainer.getGroups().firstEntry().getValue();
+        item.setGroupRef(defGroup);
+        //some POND items do not specify a data type. 
+        if (item.getItemResponse().getDataType() == null) {
+            item.getItemResponse().setDataType(ModelCV.OC_CRF_CV_DATAT_ST);
+        }
+        return true;
+    } 
     
     //To be implemented.
     private void processDD (ItemResponse itemResponse, String DDName) {}
