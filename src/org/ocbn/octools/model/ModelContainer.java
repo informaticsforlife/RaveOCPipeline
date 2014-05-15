@@ -1,5 +1,6 @@
 package org.ocbn.octools.model;
 
+import java.util.Iterator;
 import java.util.TreeMap;
 import org.ocbn.octools.util.GenUtil;
 
@@ -51,6 +52,16 @@ public class ModelContainer {
                                      GenUtil.AT + nItem.getName())) {
             System.out.println ("Overwriting existing Item: " + 
                                 nItem.getName());
+        }
+        //eliminate duplicate names. The first duplicate will not be modified.
+        Iterator iterator = this.itemMap.keySet().iterator();
+        while (iterator.hasNext()) {
+            String key = (String)iterator.next();
+            Item pItem = this.itemMap.get(key);
+            if (pItem.getName().equals(nItem.getName())) {
+                nItem.setName(nItem.getName () + GenUtil.UNDERSCORE + 
+                              nItem.getSectionRef().getLabel());
+            }
         }
         this.itemMap.put (nItem.getSectionRef().getLabel() + GenUtil.AT 
                           + nItem.getName(), nItem);

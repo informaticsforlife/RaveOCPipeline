@@ -21,7 +21,6 @@ public class DefParams {
     public static final String RAVE_CRF_FILENAME = "RaveCRFDraft";
     public static final String RAVE_FOLDERS_FILENAME = "RaveCRFForms";
     public static final String RAVE_FIELDS_FILENAME = "RaveCRFFields";
-    public static final String RAVE_DD_FILENAME = "RaveDD";
     public static final String RAVE_DDENTRIES_FILENAME = "RaveDDEntries";
     
     public static final String PROP_FILE_NAME_PROP = "RaveOC_Props";
@@ -49,7 +48,6 @@ public class DefParams {
         defParamsList.add (DefParams.RAVE_CRF_FILENAME);
         defParamsList.add (DefParams.RAVE_FOLDERS_FILENAME);
         defParamsList.add (DefParams.RAVE_FIELDS_FILENAME);
-        defParamsList.add (DefParams.RAVE_DD_FILENAME);
         defParamsList.add (DefParams.RAVE_DDENTRIES_FILENAME);    
         defParamsList.add (DefParams.PROP_FILE_NAME_PROP); 
     }

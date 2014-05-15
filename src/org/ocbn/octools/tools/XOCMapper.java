@@ -22,7 +22,7 @@ import org.ocbn.octools.util.GenUtil;
 
 public class XOCMapper {
    
-    private static ArrayList <XOCMapper> mapperList = new ArrayList <XOCMapper>();
+    private static ArrayList <XOCMapper> mappersList = new ArrayList <XOCMapper>();
     private AttVal attValX;
     private AttVal attValOC; 
     private String constVal;
@@ -147,7 +147,7 @@ public class XOCMapper {
                 if (!GenUtil.NA.equals (tempArr [5])) {
                     mapper.setComment (tempArr [5]);
                 } 
-                XOCMapper.mapperList.add(mapper);
+                XOCMapper.mappersList.add(mapper);
             }
         } catch (IOException e) {
             throw new RuntimeException ("Unable to read mapping file."
@@ -155,8 +155,8 @@ public class XOCMapper {
         }
         //debugging     
         System.out.println ("Listing all code/label pairs: ");
-        for (int i = 0; i < XOCMapper.mapperList.size (); i++) {
-            System.out.println (XOCMapper.mapperList.get (i));
+        for (int i = 0; i < XOCMapper.mappersList.size (); i++) {
+            System.out.println (XOCMapper.mappersList.get (i));
         }
     }
 
@@ -166,9 +166,9 @@ public class XOCMapper {
         XOCMapper dummy = new XOCMapper();
         ArrayList <XOCMapper> tempList = new ArrayList <XOCMapper>();
         dummy.setAttValOC(OCCategoryName, OCFieldName);
-        for (int i = 0; i < XOCMapper.mapperList.size (); i++) {
-            if (XOCMapper.mapperList.get (i).equals (dummy)) {
-                tempList.add (XOCMapper.mapperList.get(i));
+        for (int i = 0; i < XOCMapper.mappersList.size (); i++) {
+            if (XOCMapper.mappersList.get (i).equals (dummy)) {
+                tempList.add (XOCMapper.mappersList.get(i));
             }
         }
         

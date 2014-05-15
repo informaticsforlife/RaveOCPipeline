@@ -81,9 +81,9 @@ public class ModelCV {
     public static final String OC_CRF_DEF_REV_NOTES = "Data Migration: Rave";
     public static final int OC_CRF_GROUP_RNUM_DEFAULT = 1;
     public static final int OC_CRF_GROUP_RMAX_DEFAULT = 40;
-    public static final String OC_VALID_LT = "lt";
-    public static final String OC_VALID_GT = "gt";
-    public static final String OC_VALID_RANGE = "range";
+    public static final String OC_VALID_LT = "func: lt";
+    public static final String OC_VALID_GT = "func: gt";
+    public static final String OC_VALID_RANGE = "func: range";
     
     //Specific
     public static final String OC_CRF_CV_GROUP_LABEL_BASIC = "Basic"; //basic grouping
@@ -150,6 +150,11 @@ public class ModelCV {
     public static final String RAVE_NCUPPER_RANGE = "NCUpperRange";
     public static final String RAVE_IS_REQUIRED = "IsRequired";
     public static final String RAVE_IS_VISIBLE = "IsVisible";
+    //Rave - DD sheets
+    public static final String RAVE_DD_NAME = "DataDictionaryName";
+    public static final String RAVE_DD_CODE_DATA = "CodedData";
+    public static final String RAVE_DD_USER_DATA = "UserDataString";
+    public static final String RAVE_DD_SPECIFY = "Specify";
             
     static {  
         ModelCV.RaveColsList.add (ModelCV.RAVE_PROJECT_NAME); 

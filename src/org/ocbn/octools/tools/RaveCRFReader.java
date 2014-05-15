@@ -4,6 +4,7 @@ import au.com.bytecode.opencsv.CSVReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.TreeMap;
 import org.ocbn.octools.model.CRF;
 import org.ocbn.octools.model.Group;
@@ -12,6 +13,7 @@ import org.ocbn.octools.model.ItemResponse;
 import org.ocbn.octools.model.ModelContainer;
 import org.ocbn.octools.model.ModelCV;
 import org.ocbn.octools.model.Section;
+import org.ocbn.octools.util.AttValLabel;
 
 import org.ocbn.octools.util.DefParams;
 
@@ -37,6 +39,8 @@ public class RaveCRFReader {
     protected RaveCRFReader (String sourceDir) throws IOException {
         
         this.CRFMap = new TreeMap <String, ModelContainer>();
+        RaveDDMapper.initializeMappingFile(sourceDir, DefParams.getDefaultProp(
+                                           DefParams.RAVE_DDENTRIES_FILENAME));
         GenUtil.validateString(sourceDir);
         this.crfReader = new CSVReader (new FileReader (new File (
         sourceDir, DefParams.getDefaultProp(DefParams.RAVE_CRF_FILENAME))));
@@ -269,7 +273,8 @@ public class RaveCRFReader {
             if (item.getName().startsWith(BLANK_LINE_ITEM)) {
                 System.out.println ("Warning: skipping blank line item: " +
                 item.getName() + " " + item.getSectionRef().getLabel());
-                return false;
+                //return false;
+                return true;
             }
         }
         //add default group for POND 
@@ -283,5 +288,33 @@ public class RaveCRFReader {
     } 
     
     //To be implemented.
-    private void processDD (ItemResponse itemResponse, String DDName) {}
+    private void processDD (ItemResponse itemResponse, String DDName) {
+    
+        RaveDD rdd = RaveDDMapper.getRaveDD (DDName);
+        ArrayList <AttValLabel> tempList = rdd.getDDEntries();
+        String optionsStr = "", valuesStr = "";
+        for (int i = 0; i < tempList.size (); i++) {
+            optionsStr += escapeCommas (tempList.get (i).getValLabel());
+            valuesStr += escapeCommas (tempList.get (i).getVal());
+            if (i < tempList.size () - 1) {
+                optionsStr += GenUtil.COMMA;
+                valuesStr += GenUtil.COMMA;
+            }
+        }
+        itemResponse.setResponseLabel(rdd.getName());
+        itemResponse.setResponseOptions(optionsStr);
+        itemResponse.setResponseValues(valuesStr);    
+    }
+    
+    private String escapeCommas (String str) {
+        
+        int index = str.indexOf(GenUtil.COMMA);
+        //comma would not be the first character.
+        if (index > 0) {
+            str = str.replace(GenUtil.COMMA,  GenUtil.DOUBLE_BACK_SLASH + 
+                              GenUtil.COMMA);
+        }
+        
+        return str;
+    }
 }

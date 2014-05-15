@@ -11,7 +11,7 @@ import org.ocbn.octools.util.GenUtil;
 
 public class Group extends CRFEntity {
     
-    private String layout = ModelCV.OC_CRF_CV_GROUP_LAYOUT_GRID; 
+    private String layout = ModelCV.OC_CRF_CV_GROUP_LAYOUT_NONR; 
     private String displayStatus = ModelCV.OC_CRF_CV_SHOW;
     private int repeatNum = ModelCV.OC_CRF_GROUP_RNUM_DEFAULT;
     private int repeatMax = ModelCV.OC_CRF_GROUP_RMAX_DEFAULT;
