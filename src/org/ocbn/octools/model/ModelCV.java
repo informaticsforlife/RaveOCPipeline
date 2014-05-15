@@ -79,8 +79,8 @@ public class ModelCV {
     public static final int OC_CRF_1 = 1;
     public static final String OC_CRF_DEF_VERSION = "1";
     public static final String OC_CRF_DEF_REV_NOTES = "Data Migration: Rave";
-    public static final int OC_CRF_GROUP_RNUM_DEFAULT = 1;
-    public static final int OC_CRF_GROUP_RMAX_DEFAULT = 40;
+    //public static final int OC_CRF_GROUP_RNUM_DEFAULT = 1;
+    //public static final int OC_CRF_GROUP_RMAX_DEFAULT = 40;
     public static final String OC_VALID_LT = "func: lt";
     public static final String OC_VALID_GT = "func: gt";
     public static final String OC_VALID_RANGE = "func: range";

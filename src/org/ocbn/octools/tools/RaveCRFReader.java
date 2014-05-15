@@ -268,13 +268,15 @@ public class RaveCRFReader {
         
         final String RAVE_STUDY_POND = "POND";
         final String BLANK_LINE_ITEM = "BLANK_LINE";
+        final String YES_NO_DD = "No_0_Yes_1";
+        
         //To begin with, for now, skip POND CRF blank lines. 
         if (OCContainer.getOCCRF().getName().equals (RAVE_STUDY_POND)) {
             if (item.getName().startsWith(BLANK_LINE_ITEM)) {
-                System.out.println ("Warning: skipping blank line item: " +
+                System.out.println ("Warning: blank line item: " +
                 item.getName() + " " + item.getSectionRef().getLabel());
-                //return false;
-                return true;
+                return false;
+                //return true;
             }
         }
         //add default group for POND 
@@ -283,6 +285,19 @@ public class RaveCRFReader {
         //some POND items do not specify a data type. 
         if (item.getItemResponse().getDataType() == null) {
             item.getItemResponse().setDataType(ModelCV.OC_CRF_CV_DATAT_ST);
+        }
+        //checkbox(es) with no DD associated with it. 
+        if (item.getItemResponse().getResponseType()
+                .equals (ModelCV.OC_CRF_CV_RESPONSET_CHECKBOX) &&
+            item.getItemResponse().getResponseLabel() == null) {
+            item.getItemResponse().setResponseType(ModelCV.OC_CRF_CV_RESPONSET_RADIO);
+            processDD (item.getItemResponse(), YES_NO_DD);
+        }
+        //search lists with no DD. May also add the multiple select case.
+        if (item.getItemResponse().getResponseType()
+                .equals (ModelCV.OC_CRF_CV_RESPONSET_SINGLES) &&
+            item.getItemResponse().getResponseLabel() == null) {
+            item.getItemResponse().setResponseType(ModelCV.OC_CRF_CV_RESPONSET_TEXT);
         }
         return true;
     } 

@@ -13,8 +13,8 @@ public class Group extends CRFEntity {
     
     private String layout = ModelCV.OC_CRF_CV_GROUP_LAYOUT_NONR; 
     private String displayStatus = ModelCV.OC_CRF_CV_SHOW;
-    private int repeatNum = ModelCV.OC_CRF_GROUP_RNUM_DEFAULT;
-    private int repeatMax = ModelCV.OC_CRF_GROUP_RMAX_DEFAULT;
+    private int repeatNum;
+    private int repeatMax;
     
     public void setLabel (String nLabel) { this.setIDShort(nLabel); }
     
@@ -94,7 +94,7 @@ public class Group extends CRFEntity {
         
         return ModelCV.OC_GROUPS_GROUPLABEL + GenUtil.TAB + 
                ModelCV.OC_GROUPS_GROUPL + GenUtil.TAB + 
-               ModelCV.OC_GROUPS_GROUPH + GenUtil.TAB + 
+               ModelCV.OC_GROUPS_GROUPH + GenUtil.TAB +
                ModelCV.OC_GROUPS_GROUPRN + GenUtil.TAB + 
                ModelCV.OC_GROUPS_GROUPRM + GenUtil.TAB + 
                ModelCV.OC_GROUPS_GROUPDS;
@@ -105,10 +105,18 @@ public class Group extends CRFEntity {
         
         String str = this.getLabel() + GenUtil.TAB + 
                      this.getLayout() + GenUtil.TAB +
-                     GenUtil.getStrOrDef(this.getHeader()) + GenUtil.TAB +      
-                     this.getRepeatNum() + GenUtil.TAB +
-                     this.getRepeatMax() + GenUtil.TAB +
-                     this.getDisplayStatus();
+                     GenUtil.getStrOrDef(this.getHeader()) + GenUtil.TAB;
+        if (this.getRepeatNum() > 0) {
+            str += this.getRepeatNum() + GenUtil.TAB;
+        } else {
+            str += GenUtil.NOVAL + GenUtil.TAB;
+        }
+        if (this.getRepeatMax()> 0) {
+            str += this.getRepeatMax() + GenUtil.TAB;
+        } else {
+            str += GenUtil.NOVAL + GenUtil.TAB;
+        }
+        str += this.getDisplayStatus();
         
         return str;
     }
