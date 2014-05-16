@@ -118,6 +118,8 @@ public class ModelCV {
     public static final String RAVE_CT_LONGTEXT = "LongText";
     public static final String RAVE_CT_DATETIME = "DateTime";
     public static final String RAVE_CT_TEXT = "Text";
+    //Data formats - incomplete list
+    public static final String RAVE_DF_DATE = "yyyy mm dd";
     //Generic
     public static final String RAVE_FALSE = "FALSE";
     public static final String RAVE_TRUE = "TRUE";
@@ -256,5 +258,15 @@ public class ModelCV {
         }
         throw new IllegalArgumentException ("Invalid RAVE control type: " +
                                             RaveResponseType);
+    }
+    
+    public static String getOCDataType (String RaveDataFormat) {
+    
+        switch (RaveDataFormat) {
+            case ModelCV.RAVE_DF_DATE: 
+                return ModelCV.OC_CRF_CV_DATAT_DATE;
+        }
+        
+        return ModelCV.OC_CRF_CV_DATAT_ST;                      //default
     }
 }

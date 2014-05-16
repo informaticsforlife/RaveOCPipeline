@@ -1,7 +1,6 @@
 package org.ocbn.octools.model;
 
-import java.util.Iterator;
-import java.util.TreeMap;
+import java.util.ArrayList;
 import org.ocbn.octools.util.GenUtil;
 
 /**
@@ -15,9 +14,9 @@ public class ModelContainer {
    
     //Entities
     private CRF OCCRF;
-    private TreeMap <String, Section> sectionMap = new TreeMap <> ();;
-    private TreeMap <String, Group> groupMap = new TreeMap <> ();; 
-    private TreeMap <String, Item> itemMap = new TreeMap <> ();;
+    private ArrayList <Section> sectionsList = new ArrayList <> ();;
+    private ArrayList <Group> groupsList = new ArrayList <> ();; 
+    private ArrayList <Item> itemsList = new ArrayList <> ();;
     
     public void addCRF (CRF nCRF) {
     
@@ -28,59 +27,56 @@ public class ModelContainer {
     public void addSection (Section nSection) {
         
         GenUtil.validateNotNull(nSection);
-        if (this.sectionMap.containsKey(nSection.getLabel())) {
+        if (this.sectionsList.contains (nSection)) {
             System.out.println ("Overwriting existing Section: " + 
                                 nSection.getLabel());
         }
-        this.sectionMap.put (nSection.getLabel(), nSection);
+        this.sectionsList.add (nSection);
     }
     
     public void addGroup (Group nGroup) {
         
         GenUtil.validateNotNull(nGroup);
-        if (this.groupMap.containsKey(nGroup.getLabel())) {
+        if (this.groupsList.contains (nGroup)) {
             System.out.println ("Overwriting existing Group: " + 
                                 nGroup.getLabel());
         }
-        this.groupMap.put (nGroup.getLabel(), nGroup);
+        this.groupsList.add (nGroup);
     }
         
      public void addItem (Item nItem) {
         
         GenUtil.validateNotNull(nItem);
-        if (this.itemMap.containsKey(nItem.getSectionRef().getLabel() + 
-                                     GenUtil.AT + nItem.getName())) {
-            System.out.println ("Overwriting existing Item: " + 
-                                nItem.getName());
+        if (this.itemsList.contains (nItem)) {
+            System.out.println ("Overwriting existing Item: " + nItem.getName());
         }
         //eliminate duplicate names. The first duplicate will not be modified.
-        Iterator iterator = this.itemMap.keySet().iterator();
-        while (iterator.hasNext()) {
-            String key = (String)iterator.next();
-            Item pItem = this.itemMap.get(key);
-            if (pItem.getName().equals(nItem.getName())) {
+        for (int i = 0; i < this.itemsList.size (); i++) {
+            if (this.itemsList.get (i).getName().equals (nItem.getName())) {
+                System.out.println ("Warning: Duplicate item names. "
+                                    + "Renaming the latter: " + nItem.getName() 
+                                    + " " + nItem.getSectionRef().getLabel());
                 nItem.setName(nItem.getName () + GenUtil.UNDERSCORE + 
-                              nItem.getSectionRef().getLabel());
+                              nItem.getSectionRef().getLabel());    
             }
         }
-        this.itemMap.put (nItem.getSectionRef().getLabel() + GenUtil.AT 
-                          + nItem.getName(), nItem);
+        this.itemsList.add (nItem);
     }
 
     public CRF getOCCRF () { return this.OCCRF; }
     
-    public TreeMap <String, Section> getSections () { 
+    public ArrayList <Section> getSections () { 
         
-        return this.sectionMap; 
+        return this.sectionsList; 
     }
     
-    public TreeMap <String, Group> getGroups () {
+    public ArrayList <Group> getGroups () {
         
-        return this.groupMap;
+        return this.groupsList;
     }
     
-    public TreeMap <String, Item> getItems () {
+    public ArrayList <Item> getItems () {
         
-        return this.itemMap;
+        return this.itemsList;
     }
 }

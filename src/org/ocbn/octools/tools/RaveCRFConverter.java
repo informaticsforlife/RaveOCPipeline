@@ -3,12 +3,11 @@ package org.ocbn.octools.tools;
 import java.io.IOException;
 import java.util.TreeMap;
 import org.ocbn.octools.model.ModelContainer;
-import org.ocbn.octools.util.DefParams;
 import org.ocbn.octools.util.GenUtil;
 
 /**
  * CRF conversion implementation for Rave (to OC). 
- * 
+
  * @author Rashad Badrawi
  */
 

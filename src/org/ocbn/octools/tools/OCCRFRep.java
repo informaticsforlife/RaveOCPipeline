@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeMap;
 import org.ocbn.octools.model.CRF;
@@ -93,56 +94,54 @@ public class OCCRFRep {
         //debugging
     }
     
-    private void dumpSections (String path, TreeMap <String, Section> 
-                               sectionsMap) throws IOException {
+    private void dumpSections (String path, ArrayList <Section> sectionsList) 
+                                                          throws IOException {
         
-        System.out.println ("Dumping Section sheet: " + sectionsMap.size());
+        System.out.println ("Dumping Section sheet: " + sectionsList.size());
         this.bw = new BufferedWriter (new FileWriter (path + File.separator + 
                                ModelCV.OC_SECTIONS + GenUtil.FILE_SUFFIX_TEXT));
         this.bw.write (Section.toStringHeaders());
         this.bw.newLine();
         this.bw.flush();
-        Iterator iterator = sectionsMap.keySet().iterator();
+        Iterator iterator = sectionsList.iterator();
         while (iterator.hasNext()) {
-            this.bw.write (sectionsMap.get((String)iterator.next()).toString());
+            this.bw.write (iterator.next().toString());
             this.bw.newLine();
             this.bw.flush();
         }
         this.bw.close();
     }
     
-    private void dumpGroups (String path, TreeMap <String, Group> 
-                             groupsMap) throws IOException {
+    private void dumpGroups (String path, ArrayList <Group> 
+                             groupsList) throws IOException {
         
-        System.out.println ("Dumping Group sheet: " + groupsMap.size());
-        Iterator iterator = groupsMap.keySet().iterator();
+        System.out.println ("Dumping Group sheet: " + groupsList.size());
         this.bw = new BufferedWriter (new FileWriter (path + File.separator + 
                                ModelCV.OC_GROUPS + GenUtil.FILE_SUFFIX_TEXT));     
         this.bw.write (Group.toStringHeaders());
         this.bw.newLine();
         this.bw.flush();
+        Iterator iterator = groupsList.iterator();
         while (iterator.hasNext()) {
-            this.bw.write (groupsMap.get((String)iterator.next()).toString());
+            this.bw.write (iterator.next().toString());
             this.bw.newLine();
             this.bw.flush();
         }
         this.bw.close();
     }
     
-    private void dumpItems (String path, TreeMap <String, Item> itemsMap) 
+    private void dumpItems (String path, ArrayList <Item> itemsList) 
                                                            throws IOException {
         
-        System.out.println ("Dumping Item sheet: " + itemsMap.size());
+        System.out.println ("Dumping Item sheet: " + itemsList.size());
         this.bw = new BufferedWriter (new FileWriter (path + File.separator + 
                        ModelCV.OC_ITEMS + GenUtil.FILE_SUFFIX_TEXT)); 
         this.bw.write (Item.toStringHeaders());
         this.bw.newLine();
         this.bw.flush();
-        Iterator iterator = itemsMap.keySet().iterator();
+        Iterator iterator = itemsList.iterator();
         while (iterator.hasNext()) {
-            //String key = (String)iterator.next();
-            //Item item = itemsMap.get (key);
-            this.bw.write (itemsMap.get((String)iterator.next()).toString());
+            this.bw.write (iterator.next().toString());
             this.bw.newLine();
             this.bw.flush();
         }

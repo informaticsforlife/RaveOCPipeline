@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import org.ocbn.octools.model.ItemResponse;
+import org.ocbn.octools.util.AttValLabel;
 import org.ocbn.octools.util.GenUtil;
 
 /**
@@ -16,7 +18,7 @@ import org.ocbn.octools.util.GenUtil;
 
 public class RaveDDMapper {
 
-    private static ArrayList <RaveDD> RaveDDList = new ArrayList <RaveDD> ();
+    private static ArrayList <RaveDD> RaveDDList = new ArrayList <> ();
     
     private RaveDDMapper () {}
     
@@ -90,5 +92,35 @@ public class RaveDDMapper {
             System.out.print (RaveDDMapper.RaveDDList.get (i).toString());
         }
         */
+    }
+    
+    public static void processDD (ItemResponse itemResponse, String DDName) {
+    
+        RaveDD rdd = RaveDDMapper.getRaveDD (DDName);
+        ArrayList <AttValLabel> tempList = rdd.getDDEntries();
+        String optionsStr = "", valuesStr = "";
+        for (int i = 0; i < tempList.size (); i++) {
+            optionsStr += escapeCommas (tempList.get (i).getValLabel());
+            valuesStr += escapeCommas (tempList.get (i).getVal());
+            if (i < tempList.size () - 1) {
+                optionsStr += GenUtil.COMMA;
+                valuesStr += GenUtil.COMMA;
+            }
+        }
+        itemResponse.setResponseLabel(rdd.getName());
+        itemResponse.setResponseOptions(optionsStr);
+        itemResponse.setResponseValues(valuesStr);    
+    }
+    
+    private static String escapeCommas (String str) {
+        
+        int index = str.indexOf(GenUtil.COMMA);
+        //comma would not be the first character.
+        if (index > 0) {
+            str = str.replace(GenUtil.COMMA,  GenUtil.DOUBLE_BACK_SLASH + 
+                              GenUtil.COMMA);
+        }
+        
+        return str;
     }
 }

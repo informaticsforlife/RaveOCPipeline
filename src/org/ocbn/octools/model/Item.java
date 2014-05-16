@@ -175,14 +175,16 @@ public class Item extends CRFEntity {
             throw new IllegalArgumentException ("Invalid instance type: " +
                                                  o.getClass().getName());
         }
-        return this.getName().equals (((Item)o).getName ());
+        return this.getName().equals (((Item)o).getName ()) &&
+               this.getSectionRef().getLabel().equals (((Item)o).getSectionRef().getLabel());
     }
 
     @Override
     public int hashCode() {
-        
+
         int hash = 7;
         hash = 53 * hash + Objects.hashCode(this.getName());
+        hash = 53 * hash + Objects.hashCode(this.getSectionRef());
         
         return hash;
     }

@@ -4,7 +4,6 @@ import au.com.bytecode.opencsv.CSVReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.TreeMap;
 import org.ocbn.octools.model.CRF;
 import org.ocbn.octools.model.Group;
@@ -13,10 +12,7 @@ import org.ocbn.octools.model.ItemResponse;
 import org.ocbn.octools.model.ModelContainer;
 import org.ocbn.octools.model.ModelCV;
 import org.ocbn.octools.model.Section;
-import org.ocbn.octools.util.AttValLabel;
-
 import org.ocbn.octools.util.DefParams;
-
 import org.ocbn.octools.util.GenUtil;
 
 /**
@@ -205,14 +201,14 @@ public class RaveCRFReader {
                         ModelCV.getOCResponseType (tempArr [i]));
                         break;
                     case ModelCV.RAVE_DATA_DICTIONARY_NAME:
-                        processDD (itemResponse, tempArr [i]);
+                        RaveDDMapper.processDD (itemResponse, tempArr [i]);
                         break;
                     case ModelCV.RAVE_DEFAULT_VALUE:
                         itemResponse.setDefValue(tempArr [i]);
                         break;
                     case ModelCV.RAVE_DATA_FORMAT:
-                        itemResponse.setDataType(ModelCV.OC_CRF_CV_DATAT_ST);
-                        //itemResponse.setDataType(tempArr [i]);
+                        itemResponse.setDataType(
+                        ModelCV.getOCDataType (tempArr [i]));
                         break;
                     case ModelCV.RAVE_IS_REQUIRED:
                         int flag = -1;
@@ -255,81 +251,11 @@ public class RaveCRFReader {
                 itemResponse.setValidErrMsg("Response should satisfy the following "
                     + "rule(s): " + validStr);
             }
-            if (processStudyInstruct (item)) {
+            if (PONDHandler.processStudyInstruct (this.OCContainer, item)) {
                 this.OCContainer.addItem(item);
             }
             cnt++;
         }
         System.out.println ("Read: " + cnt + " CRF fields.");
-    }
-    
-    //limited to POND for now
-    private boolean processStudyInstruct (Item item) {
-        
-        final String RAVE_STUDY_POND = "POND";
-        final String BLANK_LINE_ITEM = "BLANK_LINE";
-        final String YES_NO_DD = "No_0_Yes_1";
-        
-        //To begin with, for now, skip POND CRF blank lines. 
-        if (OCContainer.getOCCRF().getName().equals (RAVE_STUDY_POND)) {
-            if (item.getName().startsWith(BLANK_LINE_ITEM)) {
-                System.out.println ("Warning: blank line item: " +
-                item.getName() + " " + item.getSectionRef().getLabel());
-                return false;
-                //return true;
-            }
-        }
-        //add default group for POND 
-        Group defGroup = OCContainer.getGroups().firstEntry().getValue();
-        item.setGroupRef(defGroup);
-        //some POND items do not specify a data type. 
-        if (item.getItemResponse().getDataType() == null) {
-            item.getItemResponse().setDataType(ModelCV.OC_CRF_CV_DATAT_ST);
-        }
-        //checkbox(es) with no DD associated with it. 
-        if (item.getItemResponse().getResponseType()
-                .equals (ModelCV.OC_CRF_CV_RESPONSET_CHECKBOX) &&
-            item.getItemResponse().getResponseLabel() == null) {
-            item.getItemResponse().setResponseType(ModelCV.OC_CRF_CV_RESPONSET_RADIO);
-            processDD (item.getItemResponse(), YES_NO_DD);
-        }
-        //search lists with no DD. May also add the multiple select case.
-        if (item.getItemResponse().getResponseType()
-                .equals (ModelCV.OC_CRF_CV_RESPONSET_SINGLES) &&
-            item.getItemResponse().getResponseLabel() == null) {
-            item.getItemResponse().setResponseType(ModelCV.OC_CRF_CV_RESPONSET_TEXT);
-        }
-        return true;
-    } 
-    
-    //To be implemented.
-    private void processDD (ItemResponse itemResponse, String DDName) {
-    
-        RaveDD rdd = RaveDDMapper.getRaveDD (DDName);
-        ArrayList <AttValLabel> tempList = rdd.getDDEntries();
-        String optionsStr = "", valuesStr = "";
-        for (int i = 0; i < tempList.size (); i++) {
-            optionsStr += escapeCommas (tempList.get (i).getValLabel());
-            valuesStr += escapeCommas (tempList.get (i).getVal());
-            if (i < tempList.size () - 1) {
-                optionsStr += GenUtil.COMMA;
-                valuesStr += GenUtil.COMMA;
-            }
-        }
-        itemResponse.setResponseLabel(rdd.getName());
-        itemResponse.setResponseOptions(optionsStr);
-        itemResponse.setResponseValues(valuesStr);    
-    }
-    
-    private String escapeCommas (String str) {
-        
-        int index = str.indexOf(GenUtil.COMMA);
-        //comma would not be the first character.
-        if (index > 0) {
-            str = str.replace(GenUtil.COMMA,  GenUtil.DOUBLE_BACK_SLASH + 
-                              GenUtil.COMMA);
-        }
-        
-        return str;
     }
 }
